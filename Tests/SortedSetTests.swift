@@ -77,6 +77,20 @@ class SortedSetTests: XCTestCase {
         }
     }
     
+    func testMassiveSet() {
+        measureBlock {
+            var set: SortedSet<UInt32> = []
+            for _ in 0..<10_000 {
+                let element = arc4random() % 1000
+                set.insert(element)
+            }
+            for _ in 0..<10_000 {
+                let element = arc4random() % 1000
+                set.remove(element)
+            }
+        }
+    }
+    
     func testIndexOfPerformance() {
         measureBlock {
             var set: SortedSet<UInt32> = []

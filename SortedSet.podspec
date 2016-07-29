@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "SortedSet"
-  s.version      = "1.0.0"
+  s.version      = "1.0.1"
   s.summary      = "Native Swift Ordered Set"
   s.description  = <<-DESC
                     A native Swift implementation of a sorted set. Requires element to conform to `Comparable`.

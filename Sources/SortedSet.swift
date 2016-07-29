@@ -86,4 +86,22 @@ public func ==<T : protocol<Hashable, Comparable>>(lhs: SortedSet<T>, rhs: Sorte
     return true
 }
 
+extension Array where Element : protocol<Comparable, Hashable> {
+    
+    /// Cast SortedSet as an Array
+    public init(_ sortedSet: SortedSet<Element>) {
+        self = sortedSet.array
+    }
+    
+}
+
+extension Set where Element : Comparable {
+    
+    /// Cast SortedSet as a Set
+    public init(_ sortedSet: SortedSet<Element>) {
+        self = sortedSet.set
+    }
+    
+}
+
 
