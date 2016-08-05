@@ -118,4 +118,65 @@ class SortedSetTests: XCTestCase {
         XCTAssert(([0, 1, 2, 3] as SortedSet).exclusiveOr([2, 3, 4, 5]).array == [0, 1, 4, 5])
     }
     
+    func testDiff() {
+        let source: SortedSet = [
+            Person(hashValue: 0, name: "A"),
+            Person(hashValue: 1, name: "C"),
+            Person(hashValue: 2, name: "D"),
+            Person(hashValue: 3, name: "G"),
+            Person(hashValue: 4, name: "L"),
+            Person(hashValue: 5, name: "M"),
+            Person(hashValue: 6, name: "Q"),
+            Person(hashValue: 7, name: "U")
+        ]
+        let target: SortedSet = [
+            Person(hashValue: 0, name: "W"),
+            Person(hashValue: 2, name: "D"),
+            Person(hashValue: 3, name: "G"),
+            Person(hashValue: 4, name: "L"),
+            Person(hashValue: 6, name: "Q"),
+            Person(hashValue: 7, name: "C"),
+            Person(hashValue: 8, name: "B"),
+            Person(hashValue: 9, name: "F"),
+            Person(hashValue: 10, name: "J")
+        ]
+        let expected = Diff(deletes: [1, 5],
+                            inserts: [0, 3, 5],
+                            moves: [.init(from: 0, to: 8), .init(from: 7, to: 1)])
+        let result = SortedSet<Person>.diff(source, target)
+        XCTAssertEqual(expected, result)
+    }
+    
+    func testDiffPerformance() {
+        let source = largeRandomSet(iterations: 10_000, range: 10_000)
+        let target = largeRandomSet(iterations: 10_000, range: 10_000)
+        measureBlock {
+            _ = SortedSet<UInt32>.diff(source, target)
+        }
+    }
+    
+    func largeRandomSet(iterations iterations: Int, range: UInt32) -> SortedSet<UInt32> {
+        var set: SortedSet<UInt32> = []
+        for _ in 0..<iterations {
+            let element = arc4random() % range
+            set.insert(element)
+        }
+        return set
+    }
+    
 }
+
+struct Person : Hashable, Comparable {
+    let hashValue: Int
+    let name: String
+}
+
+func ==(lhs: Person, rhs: Person) -> Bool {
+    return lhs.hashValue == rhs.hashValue
+}
+
+func <(lhs: Person, rhs: Person) -> Bool {
+    return lhs.name < rhs.name
+}
+
+

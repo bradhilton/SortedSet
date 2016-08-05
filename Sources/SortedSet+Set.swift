@@ -48,9 +48,7 @@ extension SortedSet {
     
     /// Remove the member from the sorted set and return it if it was present.
     public mutating func remove(member: Element) -> Element? {
-        guard let index = indexOf(member) else { return nil }
-        set.remove(member)
-        return array.removeAtIndex(index)
+        return set.remove(member).map { array.removeAtIndex(indexOf($0, in: indices)) }
     }
 
     /// Returns true if the sorted set is a subset of a finite sequence as a `Set`.
