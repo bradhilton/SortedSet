@@ -1,6 +1,6 @@
 import UIKit
 import SortedSet
-import XCPlayground
+import PlaygroundSupport
 
 struct Person : Hashable, Comparable {
     var age: Int
@@ -19,12 +19,12 @@ class TableViewController : UITableViewController {
     
     func transitionItem() -> UIBarButtonItem {
         return UIBarButtonItem(title: "Transition",
-                               style: .Plain,
+                               style: .plain,
                                target: self,
-                               action: #selector(transition))
+                               action: #selector(performTransition))
     }
     
-    func transition() {
+    func performTransition() {
         people = alternate
     }
     
@@ -49,21 +49,20 @@ class TableViewController : UITableViewController {
     {
         didSet {
             alternate = oldValue
-            animateDiff(SortedSet.diff(oldValue, people))
+            animate(diff: SortedSet.diff(oldValue, people))
         }
     }
     
-    func animateDiff(diff: Diff) {
+    func animate(diff: Diff) {
         CATransaction.begin()
         CATransaction.setCompletionBlock {
             self.tableView.reloadData()
         }
         tableView.beginUpdates()
-        tableView.insertRowsAtIndexPaths(diff.inserts.map { .init(forRow: $0, inSection: 0) }, withRowAnimation: .Top)
-        tableView.deleteRowsAtIndexPaths(diff.deletes.map { .init(forRow: $0, inSection: 0) }, withRowAnimation: .Top)
+        tableView.insertRows(at: diff.inserts.map { IndexPath(row: $0, section: 0) }, with: .top)
+        tableView.deleteRows(at: diff.deletes.map { IndexPath(row: $0, section: 0) }, with: .top)
         for move in diff.moves {
-            tableView.moveRowAtIndexPath(.init(forRow: move.from, inSection: 0),
-                toIndexPath: .init(forRow: move.to, inSection: 0))
+            tableView.moveRow(at: IndexPath(row: move.from, section: 0), to: IndexPath(row: move.to, section: 0))
         }
         tableView.endUpdates()
         CATransaction.commit()
@@ -71,18 +70,18 @@ class TableViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         navigationItem.rightBarButtonItem = transitionItem()
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let person = people[indexPath.row]
-        cell.textLabel?.text = "Age: \(person.age)   ID: \(person.hashValue)"
+        cell.textLabel?.text = "Age: \(person.age)   Hash Value: \(person.hashValue)"
         return cell
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return people.count
     }
     
@@ -90,4 +89,4 @@ class TableViewController : UITableViewController {
 
 let controller = TableViewController()
 
-XCPlaygroundPage.currentPage.liveView = UINavigationController(rootViewController: controller)
+PlaygroundPage.current.liveView = UINavigationController(rootViewController: controller)

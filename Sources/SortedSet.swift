@@ -7,7 +7,7 @@
 //
 
 /// An ordered collection of unique `Element` instances
-public struct SortedSet<Element : protocol<Hashable, Comparable>> : Hashable, CollectionType {
+public struct SortedSet<Element : Hashable & Comparable> : Hashable, Collection {
 
     internal(set) var array: [Element]
     internal(set) var set: Set<Element>
@@ -23,6 +23,10 @@ public struct SortedSet<Element : protocol<Hashable, Comparable>> : Hashable, Co
         return array.endIndex
     }
     
+    public func index(after i: Int) -> Int {
+        return array.index(after: i)
+    }
+    
     public subscript(position: Int) -> Element {
         return array[position]
     }
@@ -31,38 +35,41 @@ public struct SortedSet<Element : protocol<Hashable, Comparable>> : Hashable, Co
         return set.hashValue
     }
     
-    @warn_unused_result
-    public func indexOf(element: Element) -> Int? {
+    public func indexOf(_ element: Element) -> Int? {
         guard set.contains(element) else { return nil }
-        return indexOf(element, in: indices)
+        return indexOf(element, in: range)
     }
     
-    func indexOf(element: Element, in range: Range<Int>) -> Int {
+    var range: Range<Int> {
+        return Range(uncheckedBounds: (startIndex, endIndex))
+    }
+    
+    func indexOf(_ element: Element, in range: Range<Int>) -> Int {
         guard range.count > 2 else {
-            return element == array[range.startIndex] ? range.startIndex : range.endIndex.predecessor()
+            return element == array[range.lowerBound] ? range.lowerBound : (range.upperBound - 1)
         }
-        let middleIndex = (range.startIndex + range.endIndex)/2
+        let middleIndex = (range.lowerBound + range.upperBound)/2
         let middle = self[middleIndex]
         if element < middle {
-            return indexOf(element, in: range.startIndex..<middleIndex)
+            return indexOf(element, in: range.lowerBound..<middleIndex)
         } else {
-            return indexOf(element, in: middleIndex..<range.endIndex)
+            return indexOf(element, in: middleIndex..<range.upperBound)
         }
     }
     
     /// Construct from an arbitrary sequence with elements of type `Element`.
-    public init<S : SequenceType where S.Generator.Element == Element>(_ s: S, presorted: Bool = false, noDuplicates: Bool = false) {
+    public init<S : Sequence>(_ s: S, presorted: Bool = false, noDuplicates: Bool = false) where S.Iterator.Element == Element {
         if noDuplicates {
             if presorted {
                 (self.array, self.set) = (Array(s), Set(s))
             } else {
-                (self.array, self.set) = (s.sort(), Set(s))
+                (self.array, self.set) = (s.sorted(), Set(s))
             }
         } else {
             if presorted {
                 (self.array, self.set) = collapse(s)
             } else {
-                (self.array, self.set) = collapse(s.sort())
+                (self.array, self.set) = collapse(s.sorted())
             }
         }
     }
@@ -75,8 +82,8 @@ public struct SortedSet<Element : protocol<Hashable, Comparable>> : Hashable, Co
     
 }
 
-@warn_unused_result
-public func ==<T : protocol<Hashable, Comparable>>(lhs: SortedSet<T>, rhs: SortedSet<T>) -> Bool {
+
+public func ==<T : Hashable & Comparable>(lhs: SortedSet<T>, rhs: SortedSet<T>) -> Bool {
     guard lhs.count == rhs.count else {
         return false
     }
@@ -86,7 +93,7 @@ public func ==<T : protocol<Hashable, Comparable>>(lhs: SortedSet<T>, rhs: Sorte
     return true
 }
 
-extension Array where Element : protocol<Comparable, Hashable> {
+extension Array where Element : Comparable & Hashable {
     
     /// Cast SortedSet as an Array
     public init(_ sortedSet: SortedSet<Element>) {
@@ -95,7 +102,7 @@ extension Array where Element : protocol<Comparable, Hashable> {
     
 }
 
-extension Set where Element : Comparable {
+extension Set where Element : Comparable & Hashable {
     
     /// Cast SortedSet as a Set
     public init(_ sortedSet: SortedSet<Element>) {

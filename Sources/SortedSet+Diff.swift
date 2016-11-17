@@ -29,20 +29,20 @@ public func ==(lhs: Diff, rhs: Diff) -> Bool {
 
 extension SortedSet {
     
-    static func indices<T : protocol<Comparable, Hashable>>(set: SortedSet<T>) -> [Int : Int] {
+    static func indices<T : Comparable & Hashable>(_ set: SortedSet<T>) -> [Int : Int] {
         var indices = [Int : Int](minimumCapacity: set.count)
-        for (index, element) in set.enumerate() {
+        for (index, element) in set.enumerated() {
             indices[element.hashValue] = index
         }
         return indices
     }
     
     // O(2N + M)
-    public static func diff(source: SortedSet, _ target: SortedSet) -> Diff  {
+    public static func diff(_ source: SortedSet, _ target: SortedSet) -> Diff  {
         var diff = Diff()
         var targetSet = Set(target)
         let targetIndices = indices(target)
-        for (index, element) in source.enumerate().reverse() {
+        for (index, element) in source.enumerated().reversed() {
             if let newElement = targetSet.remove(element) {
                 if element < newElement || element > newElement {
                     diff.moves.insert(Diff.Move(from: index, to: targetIndices[element.hashValue]!))

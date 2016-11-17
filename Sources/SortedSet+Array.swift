@@ -6,7 +6,7 @@
 //  Copyright © 2016 Brad Hilton. All rights reserved.
 //
 
-extension SortedSet : ArrayLiteralConvertible {
+extension SortedSet : ExpressibleByArrayLiteral {
     
     /// Create an instance containing `elements`.
     public init(arrayLiteral elements: Element...) {
