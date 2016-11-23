@@ -7,7 +7,9 @@
 //
 
 /// An ordered collection of unique `Element` instances
-public struct SortedSet<Element : Hashable & Comparable> : Hashable, Collection {
+public struct SortedSet<Element : Hashable & Comparable> : Hashable, RandomAccessCollection {
+    
+    public typealias Indices = DefaultRandomAccessIndices<SortedSet<Element>>
 
     internal(set) var array: [Element]
     internal(set) var set: Set<Element>
@@ -25,6 +27,10 @@ public struct SortedSet<Element : Hashable & Comparable> : Hashable, Collection 
     
     public func index(after i: Int) -> Int {
         return array.index(after: i)
+    }
+    
+    public func index(before i: Int) -> Int {
+        return array.index(before: i)
     }
     
     public subscript(position: Int) -> Element {
