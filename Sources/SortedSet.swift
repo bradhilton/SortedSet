@@ -89,7 +89,7 @@ public struct SortedSet<Element : Hashable & Comparable> : Hashable, RandomAcces
 }
 
 
-public func ==<T : Hashable & Comparable>(lhs: SortedSet<T>, rhs: SortedSet<T>) -> Bool {
+public func ==<T>(lhs: SortedSet<T>, rhs: SortedSet<T>) -> Bool {
     guard lhs.count == rhs.count else {
         return false
     }
@@ -108,7 +108,7 @@ extension Array where Element : Comparable & Hashable {
     
 }
 
-extension Set where Element : Comparable & Hashable {
+extension Set where Element : Comparable {
     
     /// Cast SortedSet as a Set
     public init(_ sortedSet: SortedSet<Element>) {

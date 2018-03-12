@@ -29,7 +29,7 @@ public func ==(lhs: Diff, rhs: Diff) -> Bool {
 
 extension SortedSet {
     
-    static func indices<T : Comparable & Hashable>(_ set: SortedSet<T>) -> [Int : Int] {
+    static func indices<T>(_ set: SortedSet<T>) -> [Int : Int] {
         var indices = [Int : Int](minimumCapacity: set.count)
         for (index, element) in set.enumerated() {
             indices[element.hashValue] = index
