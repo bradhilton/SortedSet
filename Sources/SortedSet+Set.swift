@@ -6,7 +6,7 @@
 //  Copyright © 2016 Brad Hilton. All rights reserved.
 //
 
-extension SortedSet {
+extension SortedSet: SetAlgebra {
     
     public init(minimumCapacity: Int) {
         self.array = []
@@ -19,11 +19,15 @@ extension SortedSet {
         return set.contains(member)
     }
     
-    /// Insert a member into the sorted set.
-    public mutating func insert(_ member: Element) {
-        _ = remove(member)
-        set.insert(member)
-        insert(member, into: range)
+    @discardableResult public mutating func insert(_ newMember: Element) -> (inserted: Bool, memberAfterInsert: Element) {
+        remove(newMember)
+        set.insert(newMember)
+        insert(newMember, into: range)
+        return (true, newMember)
+    }
+    
+    public mutating func update(with newMember: Element) -> Element? {
+        return nil
     }
     
     private mutating func insert(_ member: Element, into range: Range<Int>) {
@@ -47,8 +51,8 @@ extension SortedSet {
     }
     
     /// Remove the member from the sorted set and return it if it was present.
-    public mutating func remove(_ member: Element) -> Element? {
-        return set.remove(member).map { array.remove(at: indexOf($0, in: range)) }
+    @discardableResult public mutating func remove(_ member: Element) -> Element? {
+        return set.remove(member).map { array.remove(at: index(of: $0, in: range)) }
     }
 
     /// Returns true if the sorted set is a subset of a finite sequence as a `Set`.
