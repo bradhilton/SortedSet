@@ -62,7 +62,7 @@ class SortedSetTests: XCTestCase {
         for _ in 0..<1000 {
             let element = arc4random() % 1000
             set.insert(element)
-            XCTAssert(set.array.index(of: element) == set.indexOf(element))
+            XCTAssert(set.array.firstIndex(of: element) == set.indexOf(element))
         }
     }
     
@@ -72,7 +72,7 @@ class SortedSetTests: XCTestCase {
             for _ in 0..<1000 {
                 let element = arc4random() % 1000
                 set.insert(element)
-                _ = set.array.index(of: element)
+                _ = set.array.firstIndex(of: element)
             }
         }
     }

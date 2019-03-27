@@ -13,9 +13,6 @@ public struct Diff : Equatable {
     public struct Move : Hashable {
         public let from: Int
         public let to: Int
-        public var hashValue: Int {
-            return Set([from, to]).hashValue
-        }
     }
 }
 

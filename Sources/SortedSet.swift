@@ -9,10 +9,10 @@
 /// An ordered collection of unique `Element` instances
 public struct SortedSet<Element : Hashable & Comparable> : Hashable, RandomAccessCollection {
     
-    public typealias Indices = DefaultRandomAccessIndices<SortedSet<Element>>
+    public typealias Indices = DefaultIndices<SortedSet<Element>>
 
-    internal(set) var array: [Element]
-    internal(set) var set: Set<Element>
+    var array: [Element]
+    var set: Set<Element>
     
     /// Always zero, which is the index of the first element when non-empty.
     public var startIndex: Int {
@@ -37,8 +37,8 @@ public struct SortedSet<Element : Hashable & Comparable> : Hashable, RandomAcces
         return array[position]
     }
     
-    public var hashValue: Int {
-        return set.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(set)
     }
     
     public func indexOf(_ element: Element) -> Int? {
