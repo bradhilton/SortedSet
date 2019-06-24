@@ -41,25 +41,25 @@ public struct SortedSet<Element : Hashable & Comparable> : Hashable, RandomAcces
         hasher.combine(set)
     }
     
-    public func indexOf(_ element: Element) -> Int? {
+    public func index(of element: Element) -> Int? {
         guard set.contains(element) else { return nil }
-        return indexOf(element, in: range)
+        return index(of: element, in: range)
     }
     
     var range: Range<Int> {
         return Range(uncheckedBounds: (startIndex, endIndex))
     }
     
-    func indexOf(_ element: Element, in range: Range<Int>) -> Int {
+    func index(of element: Element, in range: Range<Int>) -> Int {
         guard range.count > 2 else {
             return element == array[range.lowerBound] ? range.lowerBound : (range.upperBound - 1)
         }
         let middleIndex = (range.lowerBound + range.upperBound)/2
         let middle = self[middleIndex]
         if element < middle {
-            return indexOf(element, in: range.lowerBound..<middleIndex)
+            return index(of: element, in: range.lowerBound..<middleIndex)
         } else {
-            return indexOf(element, in: middleIndex..<range.upperBound)
+            return index(of: element, in: middleIndex..<range.upperBound)
         }
     }
     
@@ -78,6 +78,10 @@ public struct SortedSet<Element : Hashable & Comparable> : Hashable, RandomAcces
                 (self.array, self.set) = collapse(s.sorted())
             }
         }
+    }
+    
+    public var isEmpty: Bool {
+        return self.set.isEmpty
     }
     
     /// Construct an empty SortedSet.
